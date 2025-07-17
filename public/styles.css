@@ -1,0 +1,63 @@
+:root{
+    --headcellcolor: grey;
+    --bodycellcolor: rgb(210, 204, 204);
+    --foodcolor: rgb(205, 225, 205);
+}
+
+body{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 100vh;
+    align-items: center;
+    
+}
+
+header {
+    display: flex;
+    flex-direction: column;
+}
+
+#maingridcontainer{
+    display: grid;
+    grid-template: repeat(5, 100px) / repeat(5, 100px) ;
+    border: 5px solid black;
+}
+
+.gridcell{
+    border: 1px solid black;
+}
+
+#gameheading{
+    text-align: center;
+    font-family: Notable;
+    font-family: Orbitron;
+    font-weight: bolder;
+}
+
+#statusheading{
+     font-family: Notable;
+     font-family: Orbitron;
+}
+
+.headcell {
+    background-color: var(--headcellcolor);
+}
+
+.bodycell {
+    background-color: var(--bodycellcolor);
+}
+
+.foodcell{
+    background-color: var(--foodcolor);
+}
+
+#startbutton{
+    align-self: center;
+    margin-top: 5px;
+}
+
+#scoreboard{
+    display: none;
+    align-self: center;
+}
