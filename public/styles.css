@@ -2,6 +2,10 @@
     --headcellcolor: grey;
     --bodycellcolor: rgb(210, 204, 204);
     --foodcolor: rgb(205, 225, 205);
+    --orange1: #f0691c;
+    --orange2: #f99b08;
+    --green1: #507910;
+    --green2: #ced716;
 }
 
 body{
@@ -10,6 +14,7 @@ body{
     justify-content: space-between;
     min-height: 100vh;
     align-items: center;
+    background-image: linear-gradient(var(--green1), var(--green2));
     
 }
 
@@ -20,8 +25,9 @@ header {
 
 #maingridcontainer{
     display: grid;
-    grid-template: repeat(5, 100px) / repeat(5, 100px) ;
-    border: 5px solid black;
+    /* grid-template: repeat(5, 100px) / repeat(5, 100px) ; */
+    border: 50px solid black;
+    border-image: url("snake border image.png") 500 round;
 }
 
 .gridcell{
@@ -33,6 +39,11 @@ header {
     font-family: Notable;
     font-family: Orbitron;
     font-weight: bolder;
+    color: var(--orange2);
+}
+
+#gameheading::first-letter{
+    color: var(--orange1)
 }
 
 #statusheading{
@@ -41,23 +52,38 @@ header {
 }
 
 .headcell {
-    background-color: var(--headcellcolor);
+    background-color: var(--orange1);
 }
 
 .bodycell {
-    background-color: var(--bodycellcolor);
+    background-color: var(--orange2);
 }
 
 .foodcell{
-    background-color: var(--foodcolor);
+    background-color: var(--green1);
 }
 
 #startbutton{
     align-self: center;
     margin-top: 5px;
+    font-family: Orbitron;
 }
 
 #scoreboard{
     display: none;
     align-self: center;
+    margin-top: 0.5rem;
+}
+
+#settingsmodal{
+    background-color: #ced716;
+}
+
+.modal-content{
+    background-color: var(--green1);
+    font-family: Orbitron;
+}
+
+#gridsizeoption, #speedoption, label{
+    margin-top: 0.5rem;
 }

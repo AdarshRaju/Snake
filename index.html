@@ -5,6 +5,7 @@
         <meta name="description" content="snake game by Adarsh">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Snake</title>
+        <link rel="icon" type="image/png" href="public/snake head image.png">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,21 +18,58 @@
         <header>
             <h1 id="gameheading">Snake game</h1>
             <h2 id="statusheading">Use <i class="bi bi-arrow-left-square"></i> <i class="bi bi-arrow-up-square"></i> <i class="bi bi-arrow-down-square"></i> and <i class="bi bi-arrow-right-square"></i> to play</h2>
-            <button id="startbutton" class="btn btn-outline-secondary" type="button">Start</button>
+            <button id="startbutton" class="btn btn-success" type="button" data-bs-toggle="modal" data-bs-target="#settingsmodal">Start</button>
             <h3 id="scoreboard">Score: <span id="scorenumber"></span></h3>
         </header>
         <main>
             <div id="maingridcontainer">
+                <!-- <div class="gridcell"></div><div class="gridcell"></div><div class="gridcell"></div><div class="gridcell"></div><div class="gridcell"></div>
                 <div class="gridcell"></div><div class="gridcell"></div><div class="gridcell"></div><div class="gridcell"></div><div class="gridcell"></div>
                 <div class="gridcell"></div><div class="gridcell"></div><div class="gridcell"></div><div class="gridcell"></div><div class="gridcell"></div>
                 <div class="gridcell"></div><div class="gridcell"></div><div class="gridcell"></div><div class="gridcell"></div><div class="gridcell"></div>
-                <div class="gridcell"></div><div class="gridcell"></div><div class="gridcell"></div><div class="gridcell"></div><div class="gridcell"></div>
-                <div class="gridcell"></div><div class="gridcell"></div><div class="gridcell"></div><div class="gridcell"></div><div class="gridcell"></div>
+                <div class="gridcell"></div><div class="gridcell"></div><div class="gridcell"></div><div class="gridcell"></div><div class="gridcell"></div> -->
             </div>
         </main>
         <footer>
             <p>Created by Adarsh &copy;</p>
         </footer>
+
+
+<!-- Modal for selecting options -->
+        <div class="modal" tabindex="-1" id="settingsmodal">
+            <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Select Settings</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form class="form">
+                                <label for="gridsizeoption">Grid Size: </label>
+                                <select class="form-select" name="gridsizeoption" id="gridsizeoption">
+                                    <option value="5">5 x 5</option>
+                                    <option value="10">10 x 10</option>
+                                    <option value="15">15 x 15</option>
+                                    <option value="20">20 x 20</option>
+                                </select>
+                                <label for="speedoption">Speed: </label>
+                                <select class="form-select" name="speedoption" id="speedoption">
+                                    <option value="untimed">Untimed</option>
+                                    <option value="1000">Slow</option>
+                                    <option value="500">Medium</option>
+                                    <option value="100">Fast</option>
+                                </select>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="settingsconfirmbtn">Confirm</button>
+                        </div>
+                    </div>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
         <script src="public/index.js"></script>
     </body>
 </html>
