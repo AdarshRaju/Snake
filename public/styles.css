@@ -14,13 +14,14 @@ body{
     justify-content: space-between;
     min-height: 100vh;
     align-items: center;
-    background-image: linear-gradient(var(--green1), var(--green2));
-    
+    background-image: linear-gradient(var(--green1), var(--green2)); 
 }
+
 
 header {
     display: flex;
     flex-direction: column;
+    justify-content: center;
 }
 
 #maingridcontainer{
@@ -40,6 +41,9 @@ header {
     font-family: Orbitron;
     font-weight: bolder;
     color: var(--orange2);
+    align-self: center;
+    justify-self: center;
+    text-align: center;
 }
 
 #gameheading::first-letter{
@@ -49,6 +53,8 @@ header {
 #statusheading{
      font-family: Notable;
      font-family: Orbitron;
+     justify-self: center;
+     align-self: center;
 }
 
 .headcell {
@@ -86,4 +92,12 @@ header {
 
 #gridsizeoption, #speedoption, label{
     margin-top: 0.5rem;
+}
+
+.gameover{
+    background-image: linear-gradient(red);
+}
+
+.gamewin{
+    background-image: linear-gradient(green);
 }

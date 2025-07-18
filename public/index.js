@@ -10,6 +10,9 @@ var nooffoodcollected = 0;
 var gridsizeoption = document.getElementById("gridsizeoption");
 var speedoption = document.getElementById("speedoption");
 var settingsconfirmbtn = document.getElementById("settingsconfirmbtn");
+var docstyle = document.createElement("style");
+var gameoversound = new Audio("public/gameover.mp3");
+var winsound = new Audio("public/allsquares-achievement-bell-600.wav");
 var noofcols; 
 var boardsize;
 var timed;
@@ -19,6 +22,91 @@ var leftinterval;
 var upinterval;
 var downinterval;
 var currentdirection;
+var startX = 0;
+var endX = 0;
+var startY = 0;
+var endY = 0;
+
+
+// #region logic for touchscreens
+
+maingridcontainer.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
+
+var leftkeyevent = new KeyboardEvent("keydown", {
+    key: "ArrowLeft"
+});
+
+var rightkeyevent = new KeyboardEvent("keydown", {
+    key: "ArrowRight"
+});
+
+var upkeyevent = new KeyboardEvent("keydown", {
+    key: "ArrowUp"
+});
+
+var downkeyevent = new KeyboardEvent("keydown", {
+    key: "ArrowDown"
+});
+
+maingridcontainer.addEventListener("dragstart", e => e.preventDefault());
+
+maingridcontainer.addEventListener("mousedown", (e) =>{
+    startX = e.clientX;
+    startY = e.clientY;
+    console.log("startx and starty is: ", startX, startY);
+});
+
+maingridcontainer.addEventListener("mouseup", (e) =>{
+    endX = e.clientX;
+    endY = e.clientY;
+    console.log("endX and endY is: ", endX, endY);
+    handleGesture();
+
+});
+
+maingridcontainer.addEventListener("touchstart", (e) =>{
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+});
+
+maingridcontainer.addEventListener("touchend", (e) =>{
+    endX = e.changedTouches[0].clientX;
+    endY = e.changedTouches[0].clientY;
+    handleGesture();
+});
+
+function handleGesture() {
+    const deltaX = endX - startX;
+    const deltaY = endY - startY;
+    
+    let regX = false;
+    let regY = false;
+    
+    (Math.abs(deltaX) > Math.abs(deltaY) ) ? regX = true : regY = true;
+    
+    if (Math.abs(deltaX) > 50 && regX) {
+        if (deltaX > 0) {
+            console.log("right swipe was activated.");
+            document.dispatchEvent(rightkeyevent);
+        } else {
+            console.log("left swipe was activated.");
+            document.dispatchEvent(leftkeyevent);
+        }
+    }
+    
+
+    if (Math.abs(deltaY) > 50 && regY) {
+        if (deltaY > 0) {
+            console.log("swipe down was activated.");
+            document.dispatchEvent(downkeyevent);
+        } else {
+            console.log("swipe up was activated.");
+            document.dispatchEvent(upkeyevent);
+        }
+    }
+};
+
+// #endregion logic for touchscreens
 
 // #region used in logic 1
 // var snakebodyarr = [];
@@ -31,11 +119,11 @@ var snake = [];
 // #endregion used in logic 2
 
 
-// maingridcontainer.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
+
 
 scorenumber.innerHTML = nooffoodcollected;
 
-// var noofcols;
+
 
 var cellsarr = [];
 
@@ -50,7 +138,7 @@ function generategridcells(){
 
 function startbtnon(){
     startbutton.style.display = 'block';
-    // scoreboard.style.display = 'none';
+   
 }
 
 function startbtnoff(){
@@ -62,7 +150,7 @@ function startbtnoff(){
 
 function startgame(){
     gameover = false;
-    statusheading.innerHTML = `Use <i class="bi bi-arrow-left-square"></i> <i class="bi bi-arrow-up-square"></i> <i class="bi bi-arrow-down-square"></i> and <i class="bi bi-arrow-right-square"></i> to play`;
+    statusheading.innerHTML = `Use <i class="bi bi-arrow-left-square"></i> <i class="bi bi-arrow-up-square"></i> <i class="bi bi-arrow-down-square"></i> and <i class="bi bi-arrow-right-square"></i> or drag to play`;
     noofcols = parseInt(gridsizeoption.value);
     boardsize = noofcols * noofcols;
     if(speedoption.value=="untimed"){
@@ -75,7 +163,27 @@ function startgame(){
     resetboard();
     cellsarr = [...gridcells];
 
-    maingridcontainer.style.gridTemplate = `repeat(${noofcols}, ${500/noofcols}px) / repeat(${noofcols}, ${500/noofcols}px)`;
+    docstyle.textContent = `
+        @media (max-width: 600px) {
+            #maingridcontainer{
+                grid-template-rows: repeat(${noofcols}, ${200/noofcols}px);
+                 grid-template-columns: repeat(${noofcols}, ${200/noofcols}px);
+            }
+        }
+        @media (min-width: 601px) {
+            #maingridcontainer{
+                grid-template-rows: repeat(${noofcols}, ${400/noofcols}px);
+                grid-template-columns: repeat(${noofcols}, ${400/noofcols}px);
+            }
+
+        }   
+
+    `;
+
+    document.head.appendChild(docstyle);
+
+    // maingridcontainer.style.gridTemplate = `repeat(${noofcols}, ${500/noofcols}px) / repeat(${noofcols}, ${500/noofcols}px)`;
+
     startbtnoff();
     generatesnake();
     generatefood();
@@ -171,57 +279,68 @@ function snakeclassremove(){
 
 //  #endregion used in logic 2
 
+function wallhitlogic(){
+    gameover = true;
+    clearallintervals();
+    if (snake.length == cellsarr.length){
+        winsound.play();
+        document.body.classList.add("gamewin");
+        setTimeout(()=>{document.body.classList.remove("gamewin");}, 100);
+    } else {
+        gameoversound.play();
+        document.body.classList.add("gameover");
+        setTimeout(()=>{document.body.classList.remove("gameover");}, 100);
+    }
+    statusheading.innerHTML = "Game Over! Press start to play again.";
+    startbtnon();
+    console.log("currentheadcell after gameover is: ", [...currenthead][0]);
+
+}
+
 function insidegridlogic(newheadcellindex){
 
-            if(!(cellsarr[newheadcellindex].classList.contains("bodycell"))){
-                [...currenthead][0].classList.remove("headcell");
-                    var newhead = cellsarr[newheadcellindex];
-                    newhead.classList.add("headcell");
-                    console.log("currentheadcell after reassignment is: ", [...currenthead][0]);
+    if(!(cellsarr[newheadcellindex].classList.contains("bodycell"))){
+        [...currenthead][0].classList.remove("headcell");
+            var newhead = cellsarr[newheadcellindex];
+            newhead.classList.add("headcell");
+            console.log("currentheadcell after reassignment is: ", [...currenthead][0]);
 
-                    // #region used in logic 2
+            // #region used in logic 2
 
-                    // push the newhead into [snake]. Drop tail (first entry in [snake]) is 'foodcell' is not found.
+            // push the newhead into [snake]. Drop tail (first entry in [snake]) is 'foodcell' is not found.
 
-                    snake.push(newhead);
-                    snakeclassremove();
-                    if(!(newhead.classList.contains("foodcell"))){
-                        snake.splice(0,1);
-                        console.log("splice was run and result is: ", snake);
-                    };
-                    snakeclassadd();
+            snake.push(newhead);
+            snakeclassremove();
+            if(!(newhead.classList.contains("foodcell"))){
+                snake.splice(0,1);
+                console.log("splice was run and result is: ", snake);
+            };
+            snakeclassadd();
 
-                    // #endregion used in logic 2
-                    
-                    // #region used in logic 1
-                    // bodyarrlogic(newheadcellindex);
-                    // #endregion used in logic 1
+            // #endregion used in logic 2
+            
+            // #region used in logic 1
+            // bodyarrlogic(newheadcellindex);
+            // #endregion used in logic 1
 
-                    if([...currenthead][0].classList.contains("foodcell")){
-                        nooffoodcollected++;
-                        scorenumber.innerHTML = nooffoodcollected;
+            if([...currenthead][0].classList.contains("foodcell")){
+                nooffoodcollected++;
+                scorenumber.innerHTML = nooffoodcollected;
 
-                        generatefood();
-                        
-                        console.log("nooffood collected is now: ", nooffoodcollected);
-                    }
+                generatefood();
+                
+                console.log("nooffood collected is now: ", nooffoodcollected);
+            }
 
-                    
+            
 
-                } else {
-                    wallhitlogic();
-                    console.log("gameover was triggered by snake body hit");
-                }
-        };
+    } else {
+            wallhitlogic();
+            console.log("gameover was triggered by snake body hit");
+    }
+};
 
-        function wallhitlogic(){
-            gameover = true;
-            clearallintervals();
-            statusheading.innerHTML = "Game Over! Press start to play again.";
-            startbtnon();
-            console.log("currentheadcell after gameover is: ", [...currenthead][0]);
 
-        }
 
 function rightlogicfunction(){
             let newheadcellindex = parseInt([...currenthead][0].id) + 1;
