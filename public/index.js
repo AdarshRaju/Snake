@@ -31,7 +31,7 @@ var snake = [];
 // #endregion used in logic 2
 
 
-maingridcontainer.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
+// maingridcontainer.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
 
 scorenumber.innerHTML = nooffoodcollected;
 
