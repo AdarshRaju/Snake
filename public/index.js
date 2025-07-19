@@ -70,8 +70,10 @@ maingridcontainer.addEventListener("touchstart", (e) =>{
 });
 
 maingridcontainer.addEventListener("touchend", (e) =>{
+
     endX = e.changedTouches[0].clientX;
     endY = e.changedTouches[0].clientY;
+
     handleGesture();
 });
 
