@@ -30,8 +30,11 @@ var endY = 0;
 
 // #region logic for touchscreens
 
+<<<<<<< HEAD
 maingridcontainer.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
 
+=======
+>>>>>>> df59a082a8053ebb340d9c1acfb3e50c47fee66a
 var leftkeyevent = new KeyboardEvent("keydown", {
     key: "ArrowLeft"
 });
@@ -70,8 +73,13 @@ maingridcontainer.addEventListener("touchstart", (e) =>{
 });
 
 maingridcontainer.addEventListener("touchend", (e) =>{
+<<<<<<< HEAD
     endX = e.changedTouches[0].clientX;
     endY = e.changedTouches[0].clientY;
+=======
+    endX = e.touches[0].clientX;
+    endY = e.touches[0].clientY;
+>>>>>>> df59a082a8053ebb340d9c1acfb3e50c47fee66a
     handleGesture();
 });
 
