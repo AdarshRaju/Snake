@@ -265,18 +265,17 @@ settingsconfirmbtn.addEventListener("click", (e) =>{
 
 //  #region used in logic 2
 
-function snakeclassadd(){
-    for (let i=0; i<snake.length; i++){
-        if (i !== (snake.length -1)){
-            snake[i].classList.add('bodycell');
-        }
+function bodyclassadd(){
+
+    if(snake[(snake.length-2)]){
+    snake[(snake.length-2)].classList.add("bodycell");
     }
 };
 
-function snakeclassremove(){
-    for (cell of snake){
-        cell.classList.remove("bodycell");
-    }
+function bodyclassremove(){
+    
+        snake[0].classList.remove("bodycell");
+    
 };
 
 //  #endregion used in logic 2
@@ -312,12 +311,13 @@ function insidegridlogic(newheadcellindex){
             // push the newhead into [snake]. Drop tail (first entry in [snake]) is 'foodcell' is not found.
 
             snake.push(newhead);
-            snakeclassremove();
+            
             if(!(newhead.classList.contains("foodcell"))){
+                bodyclassremove();
                 snake.splice(0,1);
                 console.log("splice was run and result is: ", snake);
             };
-            snakeclassadd();
+            bodyclassadd();
 
             // #endregion used in logic 2
             
