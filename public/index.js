@@ -13,6 +13,8 @@ var settingsconfirmbtn = document.getElementById("settingsconfirmbtn");
 var docstyle = document.createElement("style");
 var gameoversound = new Audio("public/gameover.mp3");
 var winsound = new Audio("public/allsquares-achievement-bell-600.wav");
+var repeatedkey;
+var commoninterval;
 var noofcols; 
 var boardsize;
 var timed;
@@ -53,13 +55,13 @@ maingridcontainer.addEventListener("dragstart", e => e.preventDefault());
 maingridcontainer.addEventListener("mousedown", (e) =>{
     startX = e.clientX;
     startY = e.clientY;
-    console.log("startx and starty is: ", startX, startY);
+    // console.log("startx and starty is: ", startX, startY);
 });
 
 maingridcontainer.addEventListener("mouseup", (e) =>{
     endX = e.clientX;
     endY = e.clientY;
-    console.log("endX and endY is: ", endX, endY);
+    // console.log("endX and endY is: ", endX, endY);
     handleGesture();
 
 });
@@ -88,10 +90,10 @@ function handleGesture() {
     
     if (Math.abs(deltaX) > 50 && regX) {
         if (deltaX > 0) {
-            console.log("right swipe was activated.");
+            // console.log("right swipe was activated.");
             document.dispatchEvent(rightkeyevent);
         } else {
-            console.log("left swipe was activated.");
+            // console.log("left swipe was activated.");
             document.dispatchEvent(leftkeyevent);
         }
     }
@@ -99,10 +101,10 @@ function handleGesture() {
 
     if (Math.abs(deltaY) > 50 && regY) {
         if (deltaY > 0) {
-            console.log("swipe down was activated.");
+            // console.log("swipe down was activated.");
             document.dispatchEvent(downkeyevent);
         } else {
-            console.log("swipe up was activated.");
+            // console.log("swipe up was activated.");
             document.dispatchEvent(upkeyevent);
         }
     }
@@ -130,10 +132,49 @@ scorenumber.innerHTML = nooffoodcollected;
 var cellsarr = [];
 
 function generategridcells(){
+
+    let outsideborderwidth;
+    switch (noofcols){
+        case 5:
+            outsideborderwidth = 5;
+            break;
+        case 10:
+            outsideborderwidth = 3.5;
+            break;
+        case 15:
+            outsideborderwidth = 2.5;
+            break;
+        case 20:
+            outsideborderwidth = 2.35;
+            break;
+            
+    };
+
     for (let i=0; i<boardsize; i++){
         let newgridcell = document.createElement("div");
         newgridcell.id = i;
         newgridcell.classList.add("gridcell");
+
+        if(i<noofcols){
+            newgridcell.style.borderTop = `${outsideborderwidth}px solid black`;
+            // newgridcell.style.paddingTop = "5px";
+        }
+
+        if(i%noofcols == 0){
+            newgridcell.style.borderLeft = `${outsideborderwidth}px solid black`;
+            // newgridcell.style.paddingLeft = "5px";
+        }
+
+        if (i >= (boardsize-noofcols)){
+            newgridcell.style.borderBottom = `${outsideborderwidth}px solid black`;
+            // newgridcell.style.paddingBottom = "5px";
+        }
+
+        if (i%noofcols == (noofcols-1)){
+            newgridcell.style.borderRight = `${outsideborderwidth}px solid black`;
+            // newgridcell.style.paddingRight = "5px";
+        }
+
         maingridcontainer.appendChild(newgridcell);
     }
 };
@@ -193,18 +234,19 @@ function startgame(){
 }
 
 function clearallintervals(){
-    clearInterval(rightinterval);
-    clearInterval(leftinterval);
-    clearInterval(upinterval);
-    clearInterval(downinterval);
+    // clearInterval(rightinterval);
+    // clearInterval(leftinterval);
+    // clearInterval(upinterval);
+    // clearInterval(downinterval);
     currentdirection = null;
+    clearInterval(commoninterval);
 };
 
 function resetboard(){
 
     maingridcontainer.innerHTML = '';
     
-    console.log("gridsizeoption received is: ", gridsizeoption.value);
+    // console.log("gridsizeoption received is: ", gridsizeoption.value);
     generategridcells();
     clearallintervals();
 
@@ -268,13 +310,15 @@ settingsconfirmbtn.addEventListener("click", (e) =>{
 function bodyclassadd(){
 
     if(snake[(snake.length-2)]){
-    snake[(snake.length-2)].classList.add("bodycell");
+    // snake[(snake.length-2)].classList.add("bodycell");
+    cellsarr[snake[(snake.length-2)]].classList.add("bodycell");
     }
 };
 
 function bodyclassremove(){
     
-        snake[0].classList.remove("bodycell");
+        // snake[0].classList.remove("bodycell");
+        cellsarr[snake[0]].classList.remove("bodycell");
     
 };
 
@@ -294,28 +338,32 @@ function wallhitlogic(){
     }
     statusheading.innerHTML = "Game Over! Press start to play again.";
     startbtnon();
-    console.log("currentheadcell after gameover is: ", [...currenthead][0]);
+    // console.log("currentheadcell after gameover is: ", snake[(snake.length-1)]);
 
 }
 
 function insidegridlogic(newheadcellindex){
 
     if(!(cellsarr[newheadcellindex].classList.contains("bodycell"))){
-        [...currenthead][0].classList.remove("headcell");
+        // snake[(snake.length-1)].classList.remove("headcell");
+        cellsarr[snake[(snake.length-1)]].classList.remove("headcell");
             var newhead = cellsarr[newheadcellindex];
             newhead.classList.add("headcell");
-            console.log("currentheadcell after reassignment is: ", [...currenthead][0]);
+            // console.log("currentheadcell after reassignment is: ", snake[(snake.length-1)]);
 
             // #region used in logic 2
 
             // push the newhead into [snake]. Drop tail (first entry in [snake]) is 'foodcell' is not found.
 
-            snake.push(newhead);
+            // snake.push(newhead);
+            snake.push(newhead.id);
+
+            let atefood = newhead.classList.contains("foodcell")
             
-            if(!(newhead.classList.contains("foodcell"))){
+            if(!(atefood)){
                 bodyclassremove();
                 snake.splice(0,1);
-                console.log("splice was run and result is: ", snake);
+                // console.log("splice was run and result is: ", snake);
             };
             bodyclassadd();
 
@@ -325,27 +373,28 @@ function insidegridlogic(newheadcellindex){
             // bodyarrlogic(newheadcellindex);
             // #endregion used in logic 1
 
-            if([...currenthead][0].classList.contains("foodcell")){
+            if(atefood){
                 nooffoodcollected++;
                 scorenumber.innerHTML = nooffoodcollected;
 
                 generatefood();
                 
-                console.log("nooffood collected is now: ", nooffoodcollected);
+                // console.log("nooffood collected is now: ", nooffoodcollected);
             }
 
             
 
     } else {
             wallhitlogic();
-            console.log("gameover was triggered by snake body hit");
+            // console.log("gameover was triggered by snake body hit");
     }
 };
 
 
 
 function rightlogicfunction(){
-            let newheadcellindex = parseInt([...currenthead][0].id) + 1;
+            // let newheadcellindex = parseInt(snake[(snake.length-1)].id) + 1;
+            let newheadcellindex = parseInt(snake[(snake.length-1)]) + 1;
             // console.log("newheadcellindex on right arrow is: ", newheadcellindex);
 
             // #region used in logic 1
@@ -355,37 +404,39 @@ function rightlogicfunction(){
             if (newheadcellindex % noofcols != 0){
                 // The food and body checking logic needs to be within these constraints
 
-                console.log("newheadcellindex % noofcols returned is: ",(newheadcellindex % noofcols) );
+                // console.log("newheadcellindex % noofcols returned is: ",(newheadcellindex % noofcols) );
                 insidegridlogic(newheadcellindex);
 
                 
             }  else {
             wallhitlogic();
-            console.log("gameover was triggered by right wall");
+            // console.log("gameover was triggered by right wall");
             
             }
         }
 
 function leftlogicfunction(){
-                let newheadcellindex = parseInt([...currenthead][0].id) - 1;
+                // let newheadcellindex = parseInt(snake[(snake.length-1)].id) - 1;
+                let newheadcellindex = parseInt(snake[(snake.length-1)]) - 1;
+
                 // #region used in logic 1
                 // directionhistarr.push("l");
                 // #endregion used in logic 1
 
-                if (((newheadcellindex % noofcols != (noofcols -1)) && !([...currenthead][0].id < noofcols)) || 
-                (([...currenthead][0].id < noofcols) && !(newheadcellindex < 0))){
+                if (((newheadcellindex % noofcols != (noofcols -1)) && !(snake[(snake.length-1)] < noofcols)) || 
+                ((snake[(snake.length-1)] < noofcols) && !(newheadcellindex < 0))){
                     insidegridlogic(newheadcellindex);
                 } 
 
                 else {
                 wallhitlogic();
-                console.log("gameover was triggered by left wall");
+                // console.log("gameover was triggered by left wall");
                 
                 }
             }
 
 function downlogicfunction(){
-                let newheadcellindex = parseInt([...currenthead][0].id) + noofcols;
+                let newheadcellindex = parseInt(snake[(snake.length-1)]) + noofcols;
                 // #region used in logic 1
                 // directionhistarr.push("d");
                 // #endregion used in logic 1
@@ -393,14 +444,14 @@ function downlogicfunction(){
                     insidegridlogic(newheadcellindex);
                 }  else {
                 wallhitlogic();
-                console.log("gameover was triggered by bottom wall");
+                // console.log("gameover was triggered by bottom wall");
                 
                 
                 }
             }
 
 function uplogicfunction(){
-                let newheadcellindex = parseInt([...currenthead][0].id) - noofcols;
+                let newheadcellindex = parseInt(snake[(snake.length-1)]) - noofcols;
                 // #region used in logic 1
                 // directionhistarr.push("u");
                 // #endregion used in logic 1
@@ -408,16 +459,37 @@ function uplogicfunction(){
                     insidegridlogic(newheadcellindex);
                 }  else {
                 wallhitlogic();
-                console.log("gameover was triggered by Top wall");
+                // console.log("gameover was triggered by Top wall");
             
                 };
             }
 
+function timedlogicsetter(){
+
+    switch(currentdirection){
+        case "right":
+            repeatedkey = rightlogicfunction;
+            break;
+        case "left":
+            repeatedkey = leftlogicfunction;
+            break;
+        case "up":
+            repeatedkey = uplogicfunction;
+            break;
+        case "down":
+            repeatedkey = downlogicfunction;
+            break;
+    };
+
+    commoninterval = setInterval(repeatedkey, speed);
+
+};
+
 
 function keypresslogic(e) {
-    console.log("keyboard key pressed was: ", e.key);
+    // console.log("keyboard key pressed was: ", e.key);
     
-    console.log("currentheadcell recorded before is: ", [...currenthead][0]);
+    // console.log("currentheadcell recorded before is: ", snake[(snake.length-1)]);
 
     if(!gameover){
         // The headcell needs to check for wall and for food
@@ -431,7 +503,8 @@ function keypresslogic(e) {
             if (timed==true){
                 clearallintervals();
                 currentdirection = "right";
-                rightinterval = setInterval(rightlogicfunction, (speed));
+                // rightinterval = setInterval(rightlogicfunction, (speed));
+                timedlogicsetter();
                 
             } else {rightlogicfunction()};
         }
@@ -444,7 +517,8 @@ function keypresslogic(e) {
             if (timed==true){
                 clearallintervals();
                 currentdirection = "left";
-                leftinterval = setInterval(leftlogicfunction, (speed));
+                // leftinterval = setInterval(leftlogicfunction, (speed));
+                timedlogicsetter();
                 
             } else {leftlogicfunction()};
         }
@@ -456,7 +530,8 @@ function keypresslogic(e) {
             if (timed==true){
                 clearallintervals();
                 currentdirection = "down";
-                downinterval = setInterval(downlogicfunction, (speed));
+                // downinterval = setInterval(downlogicfunction, (speed));
+                timedlogicsetter();
                 
             } else {downlogicfunction()};
         }
@@ -466,7 +541,8 @@ function keypresslogic(e) {
             if (timed==true){
                 clearallintervals();
                 currentdirection = "up";
-                upinterval = setInterval(uplogicfunction, (speed));
+                // upinterval = setInterval(uplogicfunction, (speed));
+                timedlogicsetter();
                 
             } else {uplogicfunction()};
         }
@@ -478,13 +554,13 @@ function keypresslogic(e) {
 
 function generatesnake(){
     var randomsnakecellindex = Math.floor(Math.random()*gridcells.length);
-    console.log("cellsarr passed onto generatesnake is: ", cellsarr);
+    // console.log("cellsarr passed onto generatesnake is: ", cellsarr);
     var startinghead = cellsarr[randomsnakecellindex];
     startinghead.classList.add("headcell");
 
     // #region used in logic 2
 
-    snake.push(startinghead);
+    snake.push(startinghead.id);
     // #endregion used in logic 2
 };
 
